@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zwu.dao.StudentDao" >
+    <resultMap id="student" type="Student">
+        <id property="id" column="id"/>
+        <result property="number" column="number"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="phone" column="phone"/>
+        <result property="dormitoryId" column="dormitoryId"/>
+        <result property="professionalId" column="professionalId"/>
+        <association property="dormitoryName" column="dormitoryId" javaType="Integer" select="com.zwu.dao.DormitoryDao.findDormitoryNameById"/>
+        <association property="buildingName" column="dormitoryId" javaType="Integer" select="com.zwu.dao.DormitoryDao.findBuildingNameById"/>
+        <association property="classId" column="professionalId" javaType="Integer" select="com.zwu.dao.ProfessionalDao.findClassIdById"/>
+        <association property="className" column="professionalId" javaType="String" select="com.zwu.dao.ProfessionalDao.findClassNameById"/>
+    </resultMap>
+
+    <select id="findAll" parameterType="student" resultMap="student">
+        select * from student
+        <where>
+            <if test="number!=null and number!=''">
+                and  number like  '%${number}%'
+            </if>
+            <if test="name!=null and name!=''">
+                and  name like  '%${name}%'
+            </if>
+        </where>
+    </select>
+
+    <insert id="saveStudent" parameterType="Student" keyProperty="id" useGeneratedKeys="true">
+        insert into student(number,name,sex,age,phone,dormitoryId,professionalId)
+        values (#{number},#{name},#{sex},#{age},#{phone},#{dormitoryId},#{professionalId})
+    </insert>
+
+    <delete id="deleteStudent" parameterType="Integer">
+        delete from student where id=#{id}
+    </delete>
+
+    <update id="updateStudent" parameterType="Student">
+        update student
+        <set>
+            <if test="number!=null and number !=''">
+                number=#{number},
+            </if>
+            <if test="name!=null and name !=''">
+                name=#{name},
+            </if>
+            <if test="sex!=null and sex !=''">
+                sex=#{sex},
+            </if>
+            <if test="age!=null and age !=0">
+                age=#{age},
+            </if>
+            <if test="phone!=null and phone !=''">
+                phone=#{phone},
+            </if>
+            <if test="dormitoryId!=null and dormitoryId !=0">
+                dormitoryId=#{dormitoryId},
+            </if>
+            <if test="professionalId!=null and professionalId !=0">
+                professionalId=#{professionalId},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="findStudentById" parameterType="Integer" resultMap="student">
+        select * from student where id=#{id}
+    </select>
+</mapper>

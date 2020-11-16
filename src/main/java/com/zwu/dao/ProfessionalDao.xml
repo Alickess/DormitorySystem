@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zwu.dao.ProfessionalDao">
+    <select id="findClassIdById" parameterType="Integer" resultType="Integer">
+        select classId from professional where id=#{id}
+    </select>
+    <select id="findClassNameById" parameterType="Integer" resultType="String">
+         select className from professional where id=#{id}
+    </select>
+    <select id="findAll" parameterType="Professional" resultType="Professional">
+        select * from professional
+        <where>
+            <if test="classId!=null and classId!=0">
+                and  classId like  '%${classId}%'
+            </if>
+            <if test="className!=null and className!=''">
+                and  className like  '%${className}%'
+            </if>
+        </where>
+    </select>
+    <insert id="saveProfessional" parameterType="Professional" keyProperty="id" useGeneratedKeys="true">
+        insert into professional(classId,className,counselor)
+        values(#{classId},#{className},#{counselor})
+    </insert>
+
+    <delete id="deleteProfessional" parameterType="Integer">
+        delete from professional where id=#{id}
+    </delete>
+
+    <update id="updateProfessional" parameterType="Professional">
+        update professional
+        <set>
+            <if test="classId!=null and classId !=0">
+                classId=#{classId},
+            </if>
+            <if test="className!=null and className !=''">
+                className=#{className},
+            </if>
+            <if test="counselor!=null and counselor !=''">
+                counselor=#{counselor},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="findProfessionalById" parameterType="Integer" resultType="Professional">
+        select * from professional where id=#{id}
+    </select>
+</mapper>

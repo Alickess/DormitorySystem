@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <security:global-method-security pre-post-annotations="enabled" jsr250-annotations="enabled" secured-annotations="enabled"/>
+
+    <!-- 配置不拦截的资源 -->
+    <security:http pattern="/login.jsp" security="none"/>
+    <security:http pattern="/pages/failer.jsp" security="none"/>
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+    <security:http pattern="/image/**" security="none"/>
+    <security:http pattern="/layui/**" security="none"/>
+
+
+
+    <security:http auto-config="true" use-expressions="true">
+        <!-- 配置资料连接，表示任意路径都需要ROLE_USER权限 -->
+        <security:intercept-url pattern="/**" access="hasAnyRole('ROLE_SUPER','ROLE_ROOT','ROLE_MEMBER','ROLE_USER')" />
+
+        <security:form-login
+                login-page="/login.jsp"
+                login-processing-url="/login.do"
+                default-target-url="/index.jsp"
+                authentication-failure-url="/login.jsp"
+                authentication-success-forward-url="/pages/main.jsp"
+        />
+
+        <!-- 关闭跨域请求 -->
+        <security:csrf disabled="true"/>
+
+        <!-- 退出 -->
+        <security:logout invalidate-session="true" logout-url="/logout.do" logout-success-url="/login.jsp" />
+    </security:http>
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="adminService">
+            <!-- 配置加密的方式 -->
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+

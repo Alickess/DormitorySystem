@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zwu.dao.DormitoryCleanDao">
+    <resultMap id="dormitoryClean" type="DormitoryClean">
+        <id property="id" column="id"/>
+        <result property="dormitoryId" column="dormitoryId"/>
+        <result property="creatTime" column="creatTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="grade" column="grade"/>
+        <result property="appraise" column="appraise"/>
+        <result property="administrator" column="administrator"/>
+        <association property="dormitoryName" column="dormitoryId" javaType="Integer" select="com.zwu.dao.DormitoryDao.findDormitoryNameById"/>
+        <association property="buildingName" column="dormitoryId" javaType="Integer" select="com.zwu.dao.DormitoryDao.findBuildingNameById"/>
+    </resultMap>
+    <select id="findAll" parameterType="DormitoryClean" resultMap="dormitoryClean">
+        select * from dormitoryClean
+        <where>
+            <if test="grade!=null and grade!=0">
+                and  grade  &gt; '%${grade}%'
+            </if>
+            <if test="administrator!=null and administrator!=''">
+                and  administrator like  '%${administrator}%'
+            </if>
+        </where>
+    </select>
+
+    <insert id="saveDormitoryClean" parameterType="DormitoryClean" keyProperty="id" useGeneratedKeys="true">
+        insert into dormitoryClean(dormitoryId,creatTime,updateTime,grade,appraise,administrator)
+        values (#{dormitoryId},#{creatTime},#{updateTime},#{grade},#{appraise},#{administrator})
+    </insert>
+
+    <delete id="deleteDormitoryClean" parameterType="Integer">
+        delete from dormitoryClean where id=#{id}
+    </delete>
+
+    <update id="updateDormitoryClean" parameterType="Dormitory">
+        update dormitoryClean
+        <set>
+            <if test="dormitoryId!=null and dormitoryId!=0">
+                dormitoryId=#{dormitoryId},
+            </if>
+            <if test="updateTime!=null">
+            updateTime=#{updateTime},
+            </if>
+            <if test="grade!=null and grade!=0">
+                grade=#{grade},
+            </if>
+
+            <if test="appraise!=null and appraise!=''">
+                appraise=#{appraise},
+            </if>
+            <if test="administrator!=null and administrator!=''">
+                administrator=#{administrator},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="findDormitoryCleanById" parameterType="Integer" resultMap="dormitoryClean">
+        select * from dormitoryClean where id=#{id}
+    </select>
+
+</mapper>

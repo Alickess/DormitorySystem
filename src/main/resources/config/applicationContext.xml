@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- 配置 spring 创建容器时要扫描的包 -->
+    <!-- 开启注解扫描，管理service和dao -->
+    <context:component-scan base-package="com.zwu.service" />
+    <context:component-scan base-package="com.zwu.dao"/>
+
+    <context:property-placeholder location="classpath:config/jdbc.properties" />
+    <!--声明数据源，连接数据库-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close">
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+
+    <!--SqlSessionFactoryBean创建SqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:config/mybatis-config.xml" />
+        <!--配置helperpage分页-->
+        <property name="plugins">
+            <array>
+                <!--传入插件的对象-->
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <props>
+                            <prop key="helperDialect">mysql</prop>
+                            <prop key="reasonable">true</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!--声明mybatis的扫描器，创建dao对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <property name="basePackage" value="com.zwu.dao" />
+    </bean>
+
+
+    <!--使用spring的事务处理-->
+    <!--1. 声明事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--连接的数据库， 指定数据源-->
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <!--2. 开启事务注解驱动，告诉spring使用注解管理事务，创建代理对象
+           transaction-manager:事务管理器对象的id-->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean id="myAspect" class="com.zwu.aop.SyslogAop" />
+
+</beans>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zwu.dao.DormitoryDao">
+
+    <select id="findDormitoryNameById" parameterType="Integer" resultType="Integer">
+        select dormitoryName from dormitory where id=#{id}
+    </select>
+
+    <select id="findBuildingNameById" parameterType="Integer" resultType="Integer">
+        select buildingName from dormitory where id=#{id}
+    </select>
+
+    <select id="findAll" parameterType="Dormitory" resultType="Dormitory">
+        select * from dormitory
+        <where>
+            <if test="dormitoryName!=null and dormitoryName!=0">
+                and  dormitoryName like  '%${dormitoryName}%'
+            </if>
+            <if test="buildingName!=null and buildingName!=0">
+                and  buildingName like  '%${buildingName}%'
+            </if>
+            <if test="administrator!=null and administrator!=''">
+                and  administrator like  '%${administrator}%'
+            </if>
+        </where>
+    </select>
+
+    <insert id="saveDormitory" parameterType="Dormitory" keyProperty="id" useGeneratedKeys="true">
+        insert into dormitory(dormitoryName,buildingName,totalBed,useBed,administrator)
+        values (#{dormitoryName},#{buildingName},#{totalBed},#{useBed},#{administrator})
+    </insert>
+
+    <delete id="deleteDormitory" parameterType="Integer">
+        delete from dormitory where id=#{id}
+    </delete>
+
+    <update id="updateDormitory" parameterType="Dormitory">
+        update dormitory
+        <set>
+            <if test="dormitoryName!=null and dormitoryName!=0">
+                dormitoryName=#{dormitoryName},
+            </if>
+            <if test="buildingName!=null and buildingName!=0">
+                buildingName=#{buildingName},
+            </if>
+            <if test="totalBed!=null and totalBed!=0">
+                totalBed=#{totalBed},
+            </if>
+            <if test="useBed!=null">
+                useBed=#{useBed},
+            </if>
+            <if test="administrator!=null and administrator!=''">
+                administrator=#{administrator},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="findDormitoryById" parameterType="Integer" resultType="Dormitory">
+        select * from dormitory where id=#{id}
+    </select>
+
+    <select id="findTotalBedById" parameterType="Integer" resultType="Integer">
+        select totalBed from dormitory where id=#{id}
+    </select>
+
+    <select id="findUseBedById" parameterType="Integer" resultType="Integer">
+        select useBed from dormitory where id=#{id}
+    </select>
+    
+    <update id="updateUseBed" parameterType="Integer">
+        update dormitory set useBed=#{useBed} where id=#{id}
+    </update>
+</mapper>
