@@ -1,13 +1,13 @@
 # DormitorySystem
 ## 宿舍管理系统
 
-springSecurit
+**springSecurit**
 
-aspectj
+**aspectj**
 
-log4j2
+**log4j2**
 
-layui框架
+**layui框架**
 
 一个基础的SSM系统，基本用到了以上的几个关键技术，实现了以下功能
 
@@ -25,4 +25,6 @@ layui框架
 
 **提供账号**
 账号：tom 密码：123     其余账户密码也是123.
+
+将resources/config/db.properties中的数据库更改为你本地的数据库。
 
